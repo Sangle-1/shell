@@ -1,0 +1,17 @@
+#!/bin/bash
+read -p 'VIP为多少:' VIP
+read -p 'RIP1为多少' RIP1
+read -p 'RIP2为多少'  RIP2
+while :
+do
+   for IP in $RIP1 $RIP2
+   do
+           curl -s http://$IP &>/dev/vnull
+if [ $? -eq 0 ];then
+            ipvsadm -Ln |grep -q $IP || ipvsadm -a -t $VIP -r $IP
+        else
+             ipvsadm -Ln |grep -q $IP && ipvsadm -d -t $VIP -r $IP
+        fi
+   done
+sleep 1
+done
